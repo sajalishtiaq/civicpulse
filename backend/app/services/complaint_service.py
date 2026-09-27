@@ -1,3 +1,4 @@
+from app.redis_client import redis_client
 from sqlalchemy.orm import Session
 from uuid import UUID
 from app.models import Complaint, Status
@@ -33,7 +34,9 @@ def create_complaint(db: Session, text: str, location: str, reporter_contact: st
         triage_latency_ms=latency_ms,
         status=Status.open,
     )
-    return repo.create_complaint(db, complaint)
+    created = repo.create_complaint(db, complaint)
+    redis_client.delete("stats:aggregate")  # invalidate cache so new complaint appears immediately
+    return created
 
 def get_complaint(db: Session, complaint_id: UUID) -> Complaint:
     complaint = repo.get_complaint(db, complaint_id)

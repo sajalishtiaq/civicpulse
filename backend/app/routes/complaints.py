@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
 from sqlalchemy.orm import Session
 from uuid import UUID
 from typing import Optional
@@ -6,11 +6,20 @@ from app.db import get_db
 from app.schemas import ComplaintCreate, ComplaintOut, StatusUpdate
 from app.models import Category, Priority, Status
 from app.services import complaint_service as service
+from app.rate_limiter import check_rate_limit
 
 router = APIRouter(prefix="/api/complaints", tags=["complaints"])
-
 @router.post("", response_model=ComplaintOut, status_code=201)
-def create_complaint(payload: ComplaintCreate, db: Session = Depends(get_db)):
+def create_complaint(payload: ComplaintCreate, request: Request, db: Session = Depends(get_db)):
+    client_ip = request.client.host if request.client else "unknown"
+    allowed, retry_after = check_rate_limit(client_ip)
+    if not allowed:
+        raise HTTPException(
+            status_code=429,
+            detail="Rate limit exceeded. Try again later.",
+            headers={"Retry-After": str(retry_after)},
+        )
+    
     complaint = service.create_complaint(db, payload.text, payload.location, payload.reporter_contact)
     return complaint
 
