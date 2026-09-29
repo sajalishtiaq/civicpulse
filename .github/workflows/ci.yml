@@ -172,7 +172,7 @@ jobs:
           tags: civicpulse-frontend:ci
 
       - name: Scan backend
-        uses: aquasecurity/trivy-action@0.24.0
+        uses: aquasecurity/trivy-action@master
         with:
           image-ref: civicpulse-backend:ci
           severity: HIGH,CRITICAL
@@ -223,11 +223,16 @@ jobs:
           for i in $(seq 1 30); do
             if curl -sf http://localhost:8000/health; then
               echo "Backend ready"
-              break
+              exit 0
             fi
             echo "Waiting..."
             sleep 3
           done
+
+          echo "Backend failed to become ready"
+          docker compose -f compose.yaml ps
+          docker compose -f compose.yaml logs backend
+          exit 1
 
       - name: POST a complaint and verify it comes back
         run: |
