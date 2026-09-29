@@ -1,3 +1,4 @@
+from app.db import engine
 import logging
 import json
 import uuid
@@ -21,6 +22,11 @@ logger = logging.getLogger("civicpulse")
 
 app = FastAPI(title="CivicPulse")
 
+@app.on_event("shutdown")
+def shutdown_event():
+    logger.info("Shutting down: closing database connection pool")
+    engine.dispose()
+    
 @app.middleware("http")
 async def request_id_middleware(request: Request, call_next):
     request_id = request.headers.get("X-Request-ID", str(uuid.uuid4()))
