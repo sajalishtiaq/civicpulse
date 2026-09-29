@@ -180,7 +180,7 @@ jobs:
           ignore-unfixed: true
 
       - name: Scan frontend
-        uses: aquasecurity/trivy-action@0.24.0
+        uses: aquasecurity/trivy-action@master
         with:
           image-ref: civicpulse-frontend:ci
           severity: HIGH,CRITICAL
@@ -217,6 +217,8 @@ jobs:
 
       - name: Start services
         run: docker compose -f compose.yaml up -d --build
+      - name: Expose backend port
+        run: docker compose -f compose.yaml port backend 8000
 
       - name: Wait for backend to be ready
         run: |
