@@ -13,8 +13,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from dotenv import load_dotenv
 load_dotenv()
 
-from app.db import Base
-from app.models import Complaint  # noqa: F401 -- import so it registers on Base.metadata
+from app.db import Base  # noqa: E402
+from app.models import Complaint  # noqa: E402, F401 -- import so it registers on Base.metadata
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
