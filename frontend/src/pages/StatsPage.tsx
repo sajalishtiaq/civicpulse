@@ -53,7 +53,11 @@ export function StatsPage() {
   }
 
   useEffect(() => {
-    loadStats();
+    const fetchStats = async () => {
+      await loadStats();
+    };
+
+    fetchStats();
   }, []);
 
   const total = stats ? Object.values(stats.by_category).reduce((a, b) => a + b, 0) : 0;

@@ -44,10 +44,14 @@ export function DashboardPage() {
   }
 
   useEffect(() => {
-    loadComplaints();
+    const fetchComplaints = async () => {
+      await loadComplaints();
+    };
+
+    fetchComplaints();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, categoryFilter, priorityFilter, statusFilter]);
-
+    
   async function handleStatusChange(id: string, newStatus: Status) {
     setTransitionError(null);
     try {

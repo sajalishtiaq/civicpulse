@@ -1,4 +1,3 @@
-import time
 from app.redis_client import redis_client
 
 RATE_LIMIT_MAX_REQUESTS = 10
