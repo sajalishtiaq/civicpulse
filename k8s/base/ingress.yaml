@@ -3,10 +3,8 @@ kind: Ingress
 metadata:
   name: civicpulse-ingress
   namespace: civicpulse
-  annotations:
-    nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
-  ingressClassName: nginx
+  ingressClassName: traefik
   rules:
     - http:
         paths:

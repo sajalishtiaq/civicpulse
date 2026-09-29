@@ -23,6 +23,13 @@ spec:
         - name: backend
           image: civicpulse-backend:dev
           imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
           ports:
             - containerPort: 8000
           envFrom:
