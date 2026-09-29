@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: civicpulse
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: backend
+          image: civicpulse-backend:dev
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: civicpulse-config
+          env:
+          - name: POSTGRES_USER
+            valueFrom:
+              configMapKeyRef:
+                name: civicpulse-config
+                key: POSTGRES_USER
+
+          - name: POSTGRES_DB
+            valueFrom:
+              configMapKeyRef:
+                name: civicpulse-config
+                key: POSTGRES_DB
+
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: civicpulse-secrets
+                key: POSTGRES_PASSWORD
+
+          - name: DATABASE_URL
+            value: postgresql+psycopg://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@postgres:5432/$(POSTGRES_DB)
+
+          - name: REDIS_URL
+            value: redis://redis:6379/0
+
+          - name: GROQ_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: civicpulse-secrets
+                key: GROQ_API_KEY
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: civicpulse
+spec:
+  selector:
+    app: backend
+  ports:
+    - port: 8000
+      targetPort: 8000

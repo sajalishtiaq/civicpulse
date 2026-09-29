@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: civicpulse-config
+  namespace: civicpulse
+data:
+  POSTGRES_USER: "civicpulse"
+  POSTGRES_DB: "civicpulse"
+  TRIAGE_PROVIDER: "llm"
+  GROQ_MODEL: "openai/gpt-oss-20b"
