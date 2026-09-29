@@ -232,13 +232,3 @@ kubectl apply -k k8s/overlays/dev
 
 For prod, set image names and tags in `k8s/overlays/prod/kustomization.yaml` and provide the secret out-of-band.
 
-## Security Notes
-
-- Backend and frontend containers run as non-root users
-- Postgres and Redis are on an internal-only Docker network
-- Secrets come from env vars / Kubernetes Secrets, never from the repo
-- Complaint text is validated, length-limited, and never trusted by the LLM prompt
-
-## License
-
-Add a license of your choice here.
