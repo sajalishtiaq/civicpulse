@@ -1,5 +1,5 @@
 # Logs
-.env
+#these files should e ignored but git
 logs
 *.log
 npm-debug.log*
